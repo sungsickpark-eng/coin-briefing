@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-card: #1e293b;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: #e2e8f0;
+}
+
+/* Ensure the briefing HTML renders cleanly inside its white card */
+.briefing-content {
+  line-height: 1.7;
+}
+
+.briefing-content * {
+  max-width: 100%;
+}
+
+.briefing-content table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  display: block;
+}
