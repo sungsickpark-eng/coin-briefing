@@ -3,6 +3,7 @@ import path from 'path';
 
 export interface Briefing {
   date: string;
+  slug?: string;
   title: string;
   html: string;
   generated_at: string;
@@ -10,6 +11,7 @@ export interface Briefing {
 
 export interface ArchiveEntry {
   date: string;
+  slug?: string;
   title: string;
   generated_at: string;
 }
@@ -21,10 +23,7 @@ export function getLatestBriefing(): Briefing | null {
     const filePath = path.join(dataDir, 'latest.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     const parsed: Briefing = JSON.parse(raw);
-    // Treat placeholder (empty date) as no briefing yet
-    if (!parsed.date || !parsed.html) {
-      return null;
-    }
+    if (!parsed.date || !parsed.html) return null;
     return parsed;
   } catch {
     return null;
@@ -36,34 +35,24 @@ export function getArchive(): ArchiveEntry[] {
     const filePath = path.join(dataDir, 'archive.json');
     const raw = fs.readFileSync(filePath, 'utf-8');
     const parsed: ArchiveEntry[] = JSON.parse(raw);
-    // Sort newest first
     return parsed.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => new Date(b.generated_at).getTime() - new Date(a.generated_at).getTime()
     );
   } catch {
     return [];
   }
 }
 
-export function getBriefingByDate(date: string): Briefing | null {
+export function getBriefingBySlug(slug: string): Briefing | null {
   try {
-    // Basic validation — date must look like YYYY-MM-DD
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return null;
-    }
-    const filePath = path.join(dataDir, `${date}.json`);
+    // slug: YYYY-MM-DD 또는 YYYY-MM-DD_HHMM
+    if (!/^\d{4}-\d{2}-\d{2}(_\d{4})?$/.test(slug)) return null;
+    const filePath = path.join(dataDir, `${slug}.json`);
     const raw = fs.readFileSync(filePath, 'utf-8');
     const parsed: Briefing = JSON.parse(raw);
-    if (!parsed.date || !parsed.html) {
-      return null;
-    }
+    if (!parsed.date || !parsed.html) return null;
     return parsed;
   } catch {
     return null;
   }
-}
-
-export function getAllArchiveDates(): string[] {
-  const archive = getArchive();
-  return archive.map((entry) => entry.date);
 }
