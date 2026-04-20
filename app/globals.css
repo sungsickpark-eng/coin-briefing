@@ -22,8 +22,38 @@ body {
 }
 
 .briefing-content table {
-  width: 100%;
+  width: 100% !important;
   border-collapse: collapse;
-  overflow-x: auto;
-  display: block;
+  table-layout: fixed;
+}
+
+/* 전체 코인 테이블 컬럼 너비 고정 */
+.briefing-content table th:nth-child(1),
+.briefing-content table td:nth-child(1) { width: 22%; }   /* 종목명 */
+
+.briefing-content table th:nth-child(2),
+.briefing-content table td:nth-child(2) { width: 11%; }   /* 티커 */
+
+.briefing-content table th:nth-child(3),
+.briefing-content table td:nth-child(3) { width: 13%; }   /* 24h */
+
+.briefing-content table th:nth-child(4),
+.briefing-content table td:nth-child(4) { width: 11%; }   /* 1h */
+
+.briefing-content table th:nth-child(5),
+.briefing-content table td:nth-child(5) { width: 8%; }    /* RSI */
+
+.briefing-content table th:nth-child(6),
+.briefing-content table td:nth-child(6) { width: 11%; }   /* 추세 */
+
+.briefing-content table th:nth-child(7),
+.briefing-content table td:nth-child(7) { width: 24%; text-align: right; } /* 현재가 */
+
+/* 셀 내용 넘침 처리 */
+.briefing-content table td,
+.briefing-content table th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: keep-all;
 }
