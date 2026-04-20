@@ -47,7 +47,12 @@ body {
 .briefing-content table td:nth-child(6) { width: 11%; }   /* 추세 */
 
 .briefing-content table th:nth-child(7),
-.briefing-content table td:nth-child(7) { width: 24%; text-align: right; } /* 현재가 */
+.briefing-content table td:nth-child(7) {
+  width: 24%;
+  text-align: right;
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
 
 /* 셀 내용 넘침 처리 */
 .briefing-content table td,
