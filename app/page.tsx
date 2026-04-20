@@ -1,4 +1,5 @@
 import { getLatestBriefing } from '@/lib/data';
+import SubscribeForm from '@/components/SubscribeForm';
 
 export default function HomePage() {
   const briefing = getLatestBriefing();
@@ -66,6 +67,8 @@ export default function HomePage() {
           minute: '2-digit',
         })}
       </p>
+
+      <SubscribeForm />
     </div>
   );
 }
