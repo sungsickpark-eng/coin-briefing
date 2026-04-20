@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
 const GH_TOKEN = process.env.GITHUB_TOKEN!;
 const GH_OWNER = process.env.GITHUB_OWNER!;
 const GH_REPO  = process.env.GITHUB_REPO || 'coin-briefing';
 const FILE_PATH = 'data/subscribers.json';
+const ENC_KEY   = process.env.SUBSCRIBER_ENCRYPTION_KEY
+  ? Buffer.from(process.env.SUBSCRIBER_ENCRYPTION_KEY, 'base64')
+  : null;
 
 const GH_HEADERS = {
   Authorization: `Bearer ${GH_TOKEN}`,
@@ -11,6 +15,32 @@ const GH_HEADERS = {
   'X-GitHub-Api-Version': '2022-11-28',
   'Content-Type': 'application/json',
 };
+
+// AES-256-GCM 암호화: "nonce(12B):ciphertext:tag(16B)" → base64
+function encrypt(plain: string): string {
+  if (!ENC_KEY) return plain;
+  const nonce = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', ENC_KEY, nonce);
+  const ct = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([nonce, ct, tag]).toString('base64');
+}
+
+// AES-256-GCM 복호화 (실패 시 원본 반환 — 기존 평문 이메일 호환)
+function decrypt(enc: string): string {
+  if (!ENC_KEY) return enc;
+  try {
+    const buf = Buffer.from(enc, 'base64');
+    const nonce = buf.subarray(0, 12);
+    const tag   = buf.subarray(buf.length - 16);
+    const ct    = buf.subarray(12, buf.length - 16);
+    const decipher = createDecipheriv('aes-256-gcm', ENC_KEY, nonce);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(ct), decipher.final()]).toString('utf8');
+  } catch {
+    return enc; // 기존 평문 이메일도 그대로 처리
+  }
+}
 
 async function getSubscribers(): Promise<{ emails: string[]; sha: string }> {
   const res = await fetch(
@@ -61,10 +91,12 @@ export async function POST(req: NextRequest) {
   }
 
   const { emails, sha } = await getSubscribers();
-  if (emails.includes(email)) {
+  // 복호화해서 중복 체크
+  const plainEmails = emails.map(decrypt);
+  if (plainEmails.includes(email)) {
     return NextResponse.json({ message: '이미 구독 중인 이메일입니다.' });
   }
-  await saveSubscribers([...emails, email], sha);
+  await saveSubscribers([...emails, encrypt(email)], sha);
   return NextResponse.json({ message: '구독이 완료되었습니다! 매일 브리핑을 보내드립니다.' });
 }
 
@@ -82,7 +114,7 @@ export async function DELETE(req: NextRequest) {
   }
 
   const { emails, sha } = await getSubscribers();
-  const filtered = emails.filter((e) => e !== email);
+  const filtered = emails.filter((e) => decrypt(e) !== email);
   if (filtered.length === emails.length) {
     return NextResponse.json({ message: '구독 정보를 찾을 수 없습니다.' });
   }
