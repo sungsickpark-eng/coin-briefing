@@ -21,10 +21,28 @@ body {
   max-width: 100%;
 }
 
+/* 기본: collapse만 적용. 100%/fixed는 코인 테이블에만 */
 .briefing-content table {
-  width: 100% !important;
   border-collapse: collapse;
+}
+
+/* 코인 현황 테이블만 100% 폭 + 고정 레이아웃 */
+.briefing-content table:has(thead),
+.briefing-content .coin-overview-card table {
+  width: 100% !important;
   table-layout: fixed;
+}
+
+/* 바 차트 카드: 모바일에서 가로 스크롤 */
+.briefing-content > div:not(.coin-overview-card) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 바 차트 내 테이블·셀: max-width 해제하여 고정 픽셀 폭 유지 */
+.briefing-content > div:not(.coin-overview-card) table,
+.briefing-content > div:not(.coin-overview-card) td {
+  max-width: none;
 }
 
 /* 전체 코인 테이블 컬럼 너비 고정 — coin-overview-card 안에만 적용 */
