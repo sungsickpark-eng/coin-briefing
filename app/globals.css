@@ -50,6 +50,10 @@ body {
 .briefing-content .coin-overview-card table td:nth-child(7) {
   width: 24%;
   text-align: right;
+}
+
+/* 현재가 컬럼 색상 — thead가 있는 코인 테이블에만 적용 (바 차트 제외) */
+.briefing-content table:has(thead) td:last-child {
   color: #111827 !important;
   font-weight: 600 !important;
 }
