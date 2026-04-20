@@ -35,6 +35,8 @@ export default function HomePage() {
 
   return (
     <div>
+      <SubscribeForm />
+
       {/* Date badge */}
       <div className="mb-4 flex items-center gap-3">
         <span className="text-xs font-semibold uppercase tracking-widest text-sky-400 bg-sky-900/40 px-3 py-1 rounded-full border border-sky-800">
@@ -68,7 +70,6 @@ export default function HomePage() {
         })}
       </p>
 
-      <SubscribeForm />
     </div>
   );
 }
