@@ -47,9 +47,9 @@ export default function ArchiveSlugPage({ params }: Props) {
         {briefing.title}
       </h1>
 
-      <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-700/50">
+      <div className="rounded-2xl shadow-2xl border border-slate-700/50">
         <div
-          className="briefing-content bg-white p-6 sm:p-8"
+          className="briefing-content bg-white rounded-2xl p-6 sm:p-8"
           dangerouslySetInnerHTML={{ __html: briefing.html }}
         />
       </div>

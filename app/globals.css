@@ -21,6 +21,11 @@ body {
   max-width: 100%;
 }
 
+/* 코인 테이블은 min-width가 동작하도록 max-width 해제 */
+.briefing-content .coin-overview-card table {
+  max-width: none;
+}
+
 /* 기본: collapse만 적용. 100%/fixed는 코인 테이블에만 */
 .briefing-content table {
   border-collapse: collapse;
