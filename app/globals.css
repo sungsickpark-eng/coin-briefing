@@ -33,10 +33,15 @@ body {
   table-layout: fixed;
 }
 
-/* 바 차트 카드: 모바일에서 가로 스크롤 */
-.briefing-content > div:not(.coin-overview-card) {
+/* 모든 카드: 모바일에서 가로 스크롤 */
+.briefing-content > div {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* 코인 현황 테이블: 모바일에서 최소 너비 보장 → 글자 잘림 방지 */
+.briefing-content .coin-overview-card table {
+  min-width: 600px;
 }
 
 /* 바 차트 내 테이블·셀: max-width 해제하여 고정 픽셀 폭 유지 */
